@@ -1,16 +1,30 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 public class GUI1 {
 
     private JFrame frame1;
     private JButton inlog;
 
-    public GUI1(){
+    // Statische variabelen voor gebruikersgegevens
+    private static String registeredUsername = "";
+    private static String registeredPassword = "";
+
+    // Methode om een gebruiker te registreren
+    public static void registerUser(String username, String password) {
+        registeredUsername = username;
+        registeredPassword = password;
+    }
+
+    // Methode om inloggegevens te valideren
+    public static boolean validateLogin(String username, String password) {
+        return username.equals(registeredUsername) && password.equals(registeredPassword);
+    }
+
+    public GUI1() {
         frame1 = new JFrame();
-        frame1.setSize(900,600);
+        frame1.setSize(900, 600);
         frame1.setResizable(false);
         frame1.setTitle("Login");
         frame1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -31,30 +45,40 @@ public class GUI1 {
 
         JLabel Hydro = new JLabel("Hydro-Home");
         Hydro.setFont(new Font("Serif", Font.BOLD, 100));
-        Hydro.setForeground(new Color(200,200,200,50));
+        Hydro.setForeground(new Color(200, 200, 200, 50));
         Hydro.setOpaque(false);
-        Hydro.setBounds(20,400,700,100);
+        Hydro.setBounds(20, 400, 700, 100);
         frame1.add(Hydro);
 
         inlog = new JButton("Login");
-        inlog.setBounds(320,300,250,30);
-        inlog.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        inlog.setBounds(320, 300, 250, 30);
+        inlog.addActionListener(e -> {
+            String username = usernameField.getText();
+            String password = new String(passwordField.getPassword());
 
-                String username = usernameField.getText();
-                String password = new String(passwordField.getPassword());
-
-                new GUI();
-                frame1.dispose();
+            if (validateLogin(username, password)) {
+                JOptionPane.showMessageDialog(frame1, "Inloggen succesvol!");
+                new GUI(); // Open de volgende GUI
+                frame1.dispose(); // Sluit de huidige login GUI
+            } else {
+                JOptionPane.showMessageDialog(frame1, "Onjuiste gebruikersnaam of wachtwoord.", "Inlogfout", JOptionPane.ERROR_MESSAGE);
             }
         });
         frame1.add(inlog);
 
+        JButton createAccountButton = new JButton("Account aanmaken");
+        createAccountButton.setBounds(320, 350, 250, 30);
+        createAccountButton.addActionListener(e -> {
+            frame1.dispose();
+            new CreateAccountGUI();
+        });
+        frame1.add(createAccountButton);
+
         frame1.setVisible(true);
     }
 
-    public static void main(String [] args) {
+    public static void main(String[] args) {
+        registerUser("testuser", "testpass"); // Optioneel: een testaccount
         new GUI1();
     }
 }
